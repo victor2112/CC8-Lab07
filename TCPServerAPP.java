@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-
 public class TCPServerAPP {
     
     // declaramos una variable de tipo string
@@ -74,7 +73,7 @@ public class TCPServerAPP {
             
 
             int read;
-            byte[] byteArray = new byte[516];
+            byte[] byteArray = new byte[512];
             
             
             //System.out.println("se envia el nombre: " + fileName);
@@ -85,24 +84,14 @@ public class TCPServerAPP {
             //Send length
             out.writeUTF(file.length() + "");
 
-            //Send chunk number
-            byte[] nChunck = IntToByteArray(0001); 
+            
             
             
             //System.out.println("se envia el archivo");
             //Send package
             while ((read = bis.read(byteArray)) != -1){
+               bos.write(byteArray,0,read);
                
-                //byte[] c = Bytes.concat(nChunck, byteArray);
-                //bos.write(c,0,read + 4);
-
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                outputStream.write(nChunck);
-                outputStream.write(byteArray);
-
-                byte[] result = outputStream.toByteArray();
-                bos.write(result,0,read + 4);
-                
             }
 
             bos.close();
@@ -155,13 +144,5 @@ public class TCPServerAPP {
 
     }
 
-    public static byte[] IntToByteArray( int data ) {    
-        byte[] result = new byte[4];
-        result[0] = (byte) ((data & 0xFF000000) >> 24);
-        result[1] = (byte) ((data & 0x00FF0000) >> 16);
-        result[2] = (byte) ((data & 0x0000FF00) >> 8);
-        result[3] = (byte) ((data & 0x000000FF) >> 0);
-        return result;        
-    }
 
 }

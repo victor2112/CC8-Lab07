@@ -2,9 +2,6 @@ import java.net.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.nio.charset.StandardCharsets;
-
 
 public class TCPClientAPP {
     
@@ -48,7 +45,7 @@ public class TCPClientAPP {
                 receive(mensaje, in, bis);
                 
 
-                //System.out.println();
+                System.out.println();
                 fin = false;
                 socket.close();
 
@@ -102,75 +99,48 @@ public class TCPClientAPP {
             //System.out.println("preparado para recibir");
             
             byte[] receivedData;    
-            receivedData = new byte[516];
+            receivedData = new byte[512];
             
+            int name = 0;
+            int length = 0;
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("Client/" + mensaje));
             
             //Receive file name
-            String name = in.readUTF();
-            System.out.println("nombre: " + name);
+            in.readUTF();
 
             //Receive file length
-            String length = in.readUTF();
-            System.out.println("length: " + length);
+            in.readUTF();
 
             
-            //Calculate Chunks
-            int chunks = (int) Math.round(Integer.parseInt(length)/512 + 0.51);
-            System.out.println(chunks + "");
 
-
-
-            byte[] file[] = new byte[516][chunks];
-            int size[] = new int[chunks];
-
-            int i = 0;
-
-            byte[] file_tail = new byte[0];
-            
-            //Receive file and save in a array
+            //Receive file
             while ((read = bis.read(receivedData)) != -1){
-                
-                /*
-                file[i] = receivedData;
-                size[i] = read;
-
-                if (read < 512) {
-                    file_tail = new byte[read];
-                    file_tail = receivedData;
-                }
-                
-                
-                System.out.println(file[i] + "");
-                System.out.println(file_tail + "");
-                System.out.println(size[i] + "");
-                i = i + 1;
-                */
-                System.out.println(receivedData + "");
-                String s = new String(receivedData, StandardCharsets.UTF_8);
-                System.out.println(s + "");
-                System.out.println(read + "");
-                
-                
-            }
-
-/*
-            //Write file
-            for (int j = 0; j < chunks; j++) {
-                
-
-                if (size[j] < 512) {
-                    bos.write(file_tail,0,size[j]);
+                //String message = in.readUTF();
+                /*if (name == 0) {
+                    name = 1;
+                    System.out.println("nombre: " + message);
+                } else if (length == 0) {
+                    
+                    length = 1;
+                    System.out.println("length: " + message);
                 } else {
-                    bos.write(file[j],0,size[j]);
-                }
+                    System.out.println("chunk: " + receivedData);
+                    bos.write(receivedData,0,read);
+                }*/
+                bos.write(receivedData,0,read);
+                
+                
             }
-*/
             //System.out.println("Se cierra el archivo");
             bos.close();
             in.close();
             
+            /**/
+            //String respuesta = in.readUTF();
 
+            //System.out.println();
+            //System.out.println(logReceive);
+            //System.out.println("TCP: " + respuesta);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.exit(1);
